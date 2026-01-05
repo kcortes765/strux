@@ -1,0 +1,789 @@
+{
+  "proyecto": "PAZ",
+  "descripcion": "Software Profesional de Analisis Estructural",
+  "version": "1.0.0-mvp",
+  "generado": "2026-01-03",
+  "fase": "MVP",
+  "total_features": 18,
+  "orden_implementacion": "secuencial con dependencias",
+  "features": [
+    {
+      "id": "F00",
+      "name": "Setup del Proyecto",
+      "description": "Configuracion inicial del entorno y estructura base",
+      "priority": "critical",
+      "category": "infrastructure",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Crear estructura de carpetas segun arquitectura.md",
+        "Configurar pyproject.toml con dependencias (FastAPI, React, Three.js, OpenSeesPy, numpy, pytest, mypy, ruff)",
+        "Crear entorno virtual con Python 3.11+",
+        "Configurar mypy.ini para type checking",
+        "Configurar ruff para linting",
+        "Crear conftest.py con fixtures base para tests",
+        "Implementar paz/core/constants.py con constantes globales",
+        "Implementar paz/core/exceptions.py con excepciones personalizadas",
+        "Implementar paz/core/logging_config.py",
+        "Crear __main__.py y app.py con bootstrap basico",
+        "Verificar que pytest, mypy y ruff ejecutan sin errores"
+      ],
+      "dependencies": [],
+      "output_files": [
+        "pyproject.toml",
+        "src/paz/__init__.py",
+        "src/paz/__main__.py",
+        "src/paz/app.py",
+        "src/paz/core/__init__.py",
+        "src/paz/core/constants.py",
+        "src/paz/core/exceptions.py",
+        "src/paz/core/logging_config.py",
+        "tests/conftest.py"
+      ],
+      "acceptance_criteria": [
+        "Estructura de carpetas existe segun arquitectura",
+        "pip install -e . funciona sin errores",
+        "python -m paz inicia sin crash",
+        "mypy src/paz --strict pasa",
+        "ruff check src/paz pasa",
+        "pytest ejecuta (aunque no haya tests aun)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F31",
+      "name": "Gestion de Proyectos",
+      "description": "Crear, guardar, abrir y gestionar proyectos estructurales",
+      "priority": "critical",
+      "category": "core",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Implementar paz/domain/model/project.py con dataclass Project (id, name, units, created_at, modified_at)",
+        "Implementar paz/core/units.py con UnitSystem enum y conversiones basicas (m/kN, ft/kip)",
+        "Implementar paz/infrastructure/repositories/file_repository.py con save/load JSON",
+        "Implementar paz/application/services/project_service.py (create, save, load, get_recent)",
+        "Implementar formato archivo .paz (JSON comprimido con gzip)",
+        "Implementar versionado de formato (version field en JSON)",
+        "Agregar autoguardado con timer configurable (default 5 min)",
+        "Implementar lista de proyectos recientes (max 10, stored en settings)",
+        "Crear tests unitarios para Project, FileRepository, ProjectService",
+        "Crear test de integracion save/load roundtrip"
+      ],
+      "dependencies": ["F00"],
+      "output_files": [
+        "src/paz/domain/model/project.py",
+        "src/paz/core/units.py",
+        "src/paz/infrastructure/repositories/file_repository.py",
+        "src/paz/application/services/project_service.py",
+        "tests/unit/domain/test_project.py",
+        "tests/unit/infrastructure/test_file_repository.py",
+        "tests/integration/test_project_roundtrip.py"
+      ],
+      "acceptance_criteria": [
+        "Crear proyecto nuevo con nombre y unidades",
+        "Guardar proyecto a archivo .paz",
+        "Abrir proyecto existente sin perdida de datos",
+        "Lista de recientes se actualiza al abrir/guardar",
+        "Autoguardado funciona cada 5 minutos",
+        "Formato .paz es JSON valido y legible",
+        "Tests pasan al 100%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F01",
+      "name": "Modelacion de Nodos",
+      "description": "Crear, editar y eliminar nodos en el espacio 3D",
+      "priority": "critical",
+      "category": "modeling",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Implementar paz/domain/model/restraint.py con dataclass Restraint (ux, uy, uz, rx, ry, rz booleans)",
+        "Implementar paz/domain/model/node.py con dataclass Node (id, x, y, z, restraint)",
+        "Agregar metodos position(), distance_to() en Node",
+        "Implementar paz/domain/model/structural_model.py con lista de nodos y CRUD",
+        "Implementar deteccion de nodos duplicados (tolerancia configurable 0.001)",
+        "Implementar paz/application/commands/node_commands.py (CreateNode, DeleteNode, MoveNode)",
+        "Implementar paz/application/services/undo_redo_service.py con CommandHistory",
+        "Agregar validacion: coordenadas deben ser float finitos",
+        "Agregar limite de nodos MVP: 50,000",
+        "Crear tests unitarios para Node, Restraint, StructuralModel.nodes",
+        "Crear tests para comandos de nodos con undo/redo"
+      ],
+      "dependencies": ["F31"],
+      "output_files": [
+        "src/paz/domain/model/restraint.py",
+        "src/paz/domain/model/node.py",
+        "src/paz/domain/model/structural_model.py",
+        "src/paz/application/commands/base_command.py",
+        "src/paz/application/commands/node_commands.py",
+        "src/paz/application/services/undo_redo_service.py",
+        "tests/unit/domain/test_node.py",
+        "tests/unit/domain/test_structural_model.py",
+        "tests/unit/application/test_node_commands.py"
+      ],
+      "acceptance_criteria": [
+        "Crear nodo con coordenadas X, Y, Z",
+        "Editar coordenadas de nodo existente",
+        "Eliminar nodo (con confirmacion si tiene elementos)",
+        "Detectar y advertir nodos duplicados",
+        "Asignar restricciones (apoyos) a nodos",
+        "Undo/Redo funciona para todas las operaciones",
+        "Precision de coordenadas: 6 decimales",
+        "Tests pasan al 100%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F08",
+      "name": "Libreria de Materiales",
+      "description": "Base de datos de materiales estructurales con propiedades mecanicas",
+      "priority": "critical",
+      "category": "libraries",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Implementar paz/domain/materials/material.py con dataclass Material y MaterialType enum",
+        "Crear src/data/materials/steel_astm.json con A36, A572-Gr50, A992, A500-GrB, A500-GrC",
+        "Crear src/data/materials/concrete_nch.json con H20, H25, H30, H35",
+        "Crear src/data/materials/concrete_eurocode.json con C20, C25, C30, C35",
+        "Implementar paz/infrastructure/repositories/materials_repository.py (load from JSON, search, filter)",
+        "Implementar materiales personalizados (custom materials en proyecto)",
+        "Agregar validacion de propiedades (E > 0, nu en [0, 0.5], rho > 0)",
+        "Implementar duplicar y modificar material existente",
+        "Crear tests unitarios para Material, MaterialsRepository"
+      ],
+      "dependencies": ["F01"],
+      "output_files": [
+        "src/paz/domain/materials/__init__.py",
+        "src/paz/domain/materials/material.py",
+        "src/data/materials/steel_astm.json",
+        "src/data/materials/concrete_nch.json",
+        "src/data/materials/concrete_eurocode.json",
+        "src/paz/infrastructure/repositories/materials_repository.py",
+        "tests/unit/domain/test_material.py",
+        "tests/unit/infrastructure/test_materials_repository.py"
+      ],
+      "acceptance_criteria": [
+        "Ver lista de materiales predefinidos",
+        "Buscar material por nombre o tipo",
+        "Ver propiedades completas (E, G, nu, rho, fy, fu)",
+        "Crear material personalizado y guardarlo en proyecto",
+        "Duplicar material existente para modificar",
+        "Validacion rechaza valores invalidos",
+        "Tests pasan al 100%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F09",
+      "name": "Libreria de Secciones AISC",
+      "description": "Base de datos completa de perfiles AISC con propiedades geometricas",
+      "priority": "critical",
+      "category": "libraries",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar paz/domain/sections/section.py con dataclass Section y SectionType enum",
+        "Crear src/data/sections/aisc_w.json (~300 perfiles W)",
+        "Crear src/data/sections/aisc_hss.json (~200 perfiles HSS rect y circular)",
+        "Crear src/data/sections/aisc_l.json (~100 angulos L)",
+        "Crear src/data/sections/aisc_c.json (~40 canales C y MC)",
+        "Crear src/data/sections/aisc_other.json (HP, S, M, WT, Pipe)",
+        "Implementar paz/infrastructure/repositories/sections_repository.py",
+        "Agregar busqueda por designacion (ej: W12x26)",
+        "Agregar filtro por categoria (W, HSS, L, C, etc.)",
+        "Implementar comparacion de secciones (tabla comparativa)",
+        "Agregar datos shape_data para renderizado 3D (vertices del perfil)",
+        "Crear tests unitarios para Section, SectionsRepository"
+      ],
+      "dependencies": ["F08"],
+      "output_files": [
+        "src/paz/domain/sections/__init__.py",
+        "src/paz/domain/sections/section.py",
+        "src/data/sections/aisc_w.json",
+        "src/data/sections/aisc_hss.json",
+        "src/data/sections/aisc_l.json",
+        "src/data/sections/aisc_c.json",
+        "src/data/sections/aisc_other.json",
+        "src/paz/infrastructure/repositories/sections_repository.py",
+        "tests/unit/domain/test_section.py",
+        "tests/unit/infrastructure/test_sections_repository.py"
+      ],
+      "acceptance_criteria": [
+        "Navegar perfiles por categoria (W, HSS, L, C, etc.)",
+        "Buscar perfil por designacion exacta",
+        "Ver propiedades geometricas completas (A, Ix, Iy, Iz, Sx, Sy, rx, ry)",
+        "Comparar dos o mas secciones lado a lado",
+        "Datos incluyen shape_data para renderizado",
+        "~880 perfiles AISC cargados correctamente",
+        "Tests pasan al 100%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F12",
+      "name": "Perfiles Parametrizados",
+      "description": "Crear secciones personalizadas con dimensiones parametricas",
+      "priority": "high",
+      "category": "libraries",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Implementar paz/domain/sections/parametric.py con clases parametricas",
+        "Implementar ISection(bf, tf, d, tw) con calculo automatico de propiedades",
+        "Implementar RectangularHollow(B, H, t) (cajon)",
+        "Implementar CircularHollow(D, t) (tubo)",
+        "Implementar Angle(L1, L2, t) (angulo L)",
+        "Implementar Channel(bf, tf, d, tw) (canal C)",
+        "Implementar TSection(bf, tf, d, tw)",
+        "Implementar RectangularSolid(B, H) y CircularSolid(D)",
+        "Agregar validacion de dimensiones realistas",
+        "Generar shape_data automaticamente para renderizado",
+        "Permitir guardar perfil parametrizado en libreria del proyecto",
+        "Crear tests unitarios para cada tipo parametrico"
+      ],
+      "dependencies": ["F09"],
+      "output_files": [
+        "src/paz/domain/sections/parametric.py",
+        "src/paz/domain/sections/i_section.py",
+        "src/paz/domain/sections/rectangular_section.py",
+        "src/paz/domain/sections/circular_section.py",
+        "src/paz/domain/sections/angle_section.py",
+        "src/paz/domain/sections/channel_section.py",
+        "src/paz/domain/sections/t_section.py",
+        "tests/unit/domain/test_parametric_sections.py"
+      ],
+      "acceptance_criteria": [
+        "Crear perfil I con bf, tf, d, tw y ver propiedades calculadas",
+        "Crear perfil rectangular hueco con B, H, t",
+        "Crear tubo circular con D, t",
+        "Crear angulo L con L1, L2, t",
+        "Validacion advierte dimensiones poco realistas",
+        "Propiedades calculadas coinciden con formulas teoricas (A, I, S, r)",
+        "shape_data generado permite renderizado 3D",
+        "Tests pasan al 100%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F02",
+      "name": "Modelacion de Frames",
+      "description": "Crear, editar y eliminar elementos frame (vigas, columnas)",
+      "priority": "critical",
+      "category": "modeling",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar paz/domain/model/local_axes.py para ejes locales SAP2000",
+        "Implementar paz/domain/model/frame.py con dataclass Frame",
+        "Agregar propiedades: node_i_id, node_j_id, material_id, section_id, rotation, releases",
+        "Implementar FrameReleases dataclass para liberaciones en extremos",
+        "Agregar metodos length(), local_axes() en Frame",
+        "Agregar frames a StructuralModel con CRUD",
+        "Validar: nodos deben existir, longitud > 0.01",
+        "Implementar paz/application/commands/frame_commands.py (Create, Delete, Modify)",
+        "Agregar frame a serializacion/deserializacion del proyecto",
+        "Implementar division de frame en N segmentos",
+        "Implementar copia de frames con offset",
+        "Crear tests unitarios para Frame, FrameReleases, LocalAxes"
+      ],
+      "dependencies": ["F12"],
+      "output_files": [
+        "src/paz/domain/model/local_axes.py",
+        "src/paz/domain/model/frame.py",
+        "src/paz/application/commands/frame_commands.py",
+        "tests/unit/domain/test_frame.py",
+        "tests/unit/domain/test_local_axes.py",
+        "tests/unit/application/test_frame_commands.py"
+      ],
+      "acceptance_criteria": [
+        "Crear frame seleccionando dos nodos",
+        "Asignar material y seccion a frame",
+        "Ver longitud y propiedades del frame",
+        "Dividir frame en N segmentos (crea nodos intermedios)",
+        "Copiar frames con offset en X, Y, Z",
+        "Rotar frame alrededor de su eje longitudinal",
+        "Ejes locales calculados segun convencion SAP2000",
+        "Undo/Redo funciona para todas las operaciones",
+        "Tests pasan al 100%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F13",
+      "name": "Analisis Estatico Lineal",
+      "description": "Ejecutar analisis estatico y obtener resultados",
+      "priority": "critical",
+      "category": "analysis",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar paz/domain/loads/nodal_load.py para cargas puntuales",
+        "Implementar paz/domain/loads/distributed_load.py para cargas distribuidas",
+        "Implementar paz/domain/loads/load_case.py y LoadCaseType enum (Dead, Live, etc.)",
+        "Implementar paz/domain/loads/load_combination.py con factores",
+        "Implementar app/infrastructure/analysis_adapter.py (OpenSees preferido, motor intercambiable)",
+        "Configurar OpenSees (openseespy) para analisis estatico y validar adaptadores a Kratos/RISA",
+        "Auditar versiones de Python 3.11/3.12 para openseespy y Kratos",
+        "Implementar paz/domain/results/analysis_results.py",
+        "Implementar paz/domain/results/nodal_results.py (desplazamientos, reacciones)",
+        "Implementar paz/domain/results/frame_results.py (P, V2, V3, T, M2, M3)",
+        "Implementar paz/application/services/analysis_service.py",
+        "Agregar validacion de modelo antes de analisis (apoyos, conectividad)",
+        "Implementar progreso de analisis con callback",
+        "Implementar deteccion de modelo inestable con mensaje claro",
+        "Crear tests con modelos conocidos (viga empotrada, portico simple)"
+      ],
+      "dependencies": ["F02"],
+      "output_files": [
+        "src/paz/domain/loads/__init__.py",
+        "src/paz/domain/loads/nodal_load.py",
+        "src/paz/domain/loads/distributed_load.py",
+        "src/paz/domain/loads/load_case.py",
+        "src/paz/domain/loads/load_combination.py",
+        "backend/app/infrastructure/opensees_adapter.py",
+        "backend/app/infrastructure/kratos_adapter.py",
+        "src/paz/domain/results/__init__.py",
+        "src/paz/domain/results/analysis_results.py",
+        "src/paz/domain/results/nodal_results.py",
+        "src/paz/domain/results/frame_results.py",
+        "src/paz/application/services/analysis_service.py",
+        "src/paz/domain/validation/model_validator.py",
+        "tests/unit/domain/test_loads.py",
+        "tests/unit/infrastructure/test_opensees_adapter.py",
+        "tests/unit/infrastructure/test_kratos_adapter.py",
+        "tests/integration/test_analysis_flow.py"
+      ],
+      "acceptance_criteria": [
+        "Ejecutar analisis estatico con un click",
+        "Ver progreso del analisis",
+        "Definir casos de carga (Dead, Live, etc.)",
+        "Definir combinaciones de carga con factores",
+        "Obtener desplazamientos nodales (Ux, Uy, Uz, Rx, Ry, Rz)",
+        "Obtener reacciones en apoyos",
+        "Obtener esfuerzos en frames (P, V2, V3, T, M2, M3)",
+        "Mensaje claro si modelo es inestable",
+        "Tiempo < 30s para modelo 10,000 elementos",
+        "Tests con resultados conocidos pasan"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F18",
+      "name": "Visualizacion 3D Desplazamientos",
+      "description": "Mostrar estructura deformada con escala y coloreado",
+      "priority": "critical",
+      "category": "visualization",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar paz/presentation/viewport/viewport_widget.py con PyVista + Qt",
+        "Implementar renderizado basico de nodos (puntos) y frames (lineas)",
+        "Implementar paz/presentation/viewport/render_modes.py (wireframe, solid)",
+        "Agregar visualizacion de restricciones (simbolos de apoyo)",
+        "Implementar visualizacion de estructura deformada superpuesta",
+        "Agregar escala de deformacion configurable (slider 1-1000)",
+        "Implementar coloreado por magnitud de desplazamiento (colormap)",
+        "Agregar selector de componente (Ux, Uy, Uz, total)",
+        "Implementar barra de colores con valores min/max",
+        "Agregar tooltip con valores al hacer click en nodo",
+        "Implementar cambio entre casos de carga en resultados",
+        "Agregar exportar imagen de vista actual (PNG, JPG)",
+        "Optimizar para 30+ FPS con 10,000 elementos"
+      ],
+      "dependencies": ["F13"],
+      "output_files": [
+        "src/paz/presentation/viewport/__init__.py",
+        "src/paz/presentation/viewport/viewport_widget.py",
+        "src/paz/presentation/viewport/render_modes.py",
+        "src/paz/presentation/viewport/deformed_renderer.py",
+        "src/paz/presentation/widgets/color_scale.py",
+        "tests/unit/presentation/test_viewport_widget.py"
+      ],
+      "acceptance_criteria": [
+        "Ver estructura deformada superpuesta a original",
+        "Ajustar escala de deformacion con slider",
+        "Ver coloreado por magnitud (rainbow o viridis)",
+        "Seleccionar componente Ux, Uy, Uz o total",
+        "Ver valores numericos al click en nodo",
+        "Cambiar entre casos de carga",
+        "Exportar imagen PNG de vista actual",
+        "FPS > 30 con modelo 10,000 elementos",
+        "Rotacion y zoom fluidos"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F19",
+      "name": "Visualizacion de Esfuerzos",
+      "description": "Mostrar diagramas de esfuerzos en frames",
+      "priority": "critical",
+      "category": "visualization",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar paz/presentation/viewport/force_diagrams.py",
+        "Implementar diagrama de momento flector (M3)",
+        "Implementar diagrama de corte (V2)",
+        "Implementar diagrama de fuerza axial (P)",
+        "Implementar diagrama de torsion (T) y M2, V3",
+        "Agregar coloreado por magnitud (azul negativo, rojo positivo)",
+        "Implementar interpolacion lineal entre puntos de integracion",
+        "Agregar valores en extremos y maximo de cada frame",
+        "Implementar filtro de elementos por rango de esfuerzos",
+        "Agregar tabla de maximos globales por tipo de esfuerzo",
+        "Implementar resaltado del frame con valor maximo",
+        "Agregar selector de tipo de diagrama en UI"
+      ],
+      "dependencies": ["F18"],
+      "output_files": [
+        "src/paz/presentation/viewport/force_diagrams.py",
+        "src/paz/presentation/panels/results_panel.py",
+        "tests/unit/presentation/test_force_diagrams.py"
+      ],
+      "acceptance_criteria": [
+        "Ver diagrama de momento M3 en cada frame",
+        "Ver diagrama de corte V2 en cada frame",
+        "Ver diagrama de fuerza axial P",
+        "Coloreado azul=negativo, rojo=positivo",
+        "Ver valores en extremos y maximo por frame",
+        "Filtrar frames por rango de esfuerzos",
+        "Ver tabla de maximos globales",
+        "Resaltar frame con esfuerzo maximo con un click",
+        "Tests pasan"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F21",
+      "name": "Perfiles Extruidos",
+      "description": "Visualizar frames con geometria de seccion real (3D solido)",
+      "priority": "high",
+      "category": "visualization",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar paz/presentation/viewport/extruded_renderer.py",
+        "Generar mesh de seccion desde shape_data",
+        "Extruir mesh a lo largo del eje del frame",
+        "Aplicar rotacion de ejes locales correctamente",
+        "Implementar toggle vista linea/solido",
+        "Agregar coloreado por material en vista extruida",
+        "Implementar deformada con perfiles extruidos",
+        "Agregar LOD (Level of Detail) segun zoom",
+        "Optimizar con instancing para secciones repetidas",
+        "Mantener 30+ FPS con perfiles extruidos"
+      ],
+      "dependencies": ["F19"],
+      "output_files": [
+        "src/paz/presentation/viewport/extruded_renderer.py",
+        "src/paz/presentation/viewport/mesh_generator.py",
+        "tests/unit/presentation/test_extruded_renderer.py"
+      ],
+      "acceptance_criteria": [
+        "Ver frames con seccion extruida (3D solido)",
+        "Toggle entre vista linea y solido",
+        "Coloreado por material visible",
+        "Deformada muestra perfiles solidos correctamente",
+        "LOD reduce detalle al alejar camara",
+        "FPS > 30 con extruido activo (modelo 5,000 elementos)",
+        "Orientacion correcta segun ejes locales"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F33",
+      "name": "Export/Import Formatos",
+      "description": "Exportar e importar en formatos estandar",
+      "priority": "medium",
+      "category": "io",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Implementar paz/infrastructure/exporters/csv_exporter.py",
+        "Exportar nodos a CSV (id, x, y, z, restraints)",
+        "Exportar frames a CSV (id, node_i, node_j, material, section)",
+        "Exportar resultados a CSV (desplazamientos, esfuerzos)",
+        "Implementar paz/infrastructure/importers/csv_importer.py",
+        "Importar nodos desde CSV",
+        "Importar frames desde CSV (validando referencias)",
+        "Implementar paz/infrastructure/exporters/dxf_exporter.py (lineas 3D)",
+        "Implementar paz/infrastructure/importers/dxf_importer.py",
+        "Implementar paz/infrastructure/importers/autocad_line_importer.py (lineas AutoCAD -> nodos/frames)",
+        "Agregar dialogo de opciones de exportacion/importacion",
+        "Agregar dialogo para mapear capas AutoCAD a materiales y secciones",
+        "Crear tests para roundtrip CSV"
+      ],
+      "dependencies": ["F21"],
+      "output_files": [
+        "src/paz/infrastructure/exporters/__init__.py",
+        "src/paz/infrastructure/exporters/csv_exporter.py",
+        "src/paz/infrastructure/exporters/dxf_exporter.py",
+        "src/paz/infrastructure/importers/__init__.py",
+        "src/paz/infrastructure/importers/csv_importer.py",
+        "src/paz/infrastructure/importers/dxf_importer.py",
+        "src/paz/infrastructure/importers/autocad_line_importer.py",
+        "tests/unit/infrastructure/test_csv_exporter.py",
+        "tests/unit/infrastructure/test_csv_importer.py",
+        "tests/unit/infrastructure/test_autocad_importer.py",
+        "tests/integration/test_csv_roundtrip.py"
+      ],
+      "acceptance_criteria": [
+        "Exportar nodos y frames a CSV compatible con Excel",
+        "Exportar resultados a CSV con headers claros",
+        "Importar nodos desde CSV",
+        "Importar frames desde CSV con validacion",
+        "Exportar geometria a DXF (lineas 3D)",
+        "Importar DXF convirtiendo lineas a frames",
+        "Importar lineas AutoCAD asignando materiales y secciones via dialogo",
+        "Roundtrip CSV sin perdida de datos",
+        "Tests pasan al 100%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F-UI",
+      "name": "Interfaz de Usuario Completa",
+      "description": "MainWindow con todos los componentes UI integrados",
+      "priority": "critical",
+      "category": "presentation",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar paz/presentation/main_window.py con PySide6",
+        "Crear menu principal (File, Edit, View, Model, Analysis, Help)",
+        "Crear toolbar con acciones frecuentes",
+        "Integrar ViewportWidget como widget central",
+        "Implementar paz/presentation/panels/property_panel.py",
+        "Implementar paz/presentation/panels/model_tree.py (arbol de modelo)",
+        "Implementar paz/presentation/dialogs/node_dialog.py",
+        "Implementar paz/presentation/dialogs/frame_dialog.py",
+        "Implementar paz/presentation/dialogs/material_dialog.py",
+        "Implementar paz/presentation/dialogs/section_dialog.py",
+        "Agregar shortcuts de teclado (Ctrl+S, Ctrl+Z, Delete, etc.)",
+        "Implementar statusbar con info del modelo",
+        "Agregar indicadores de progreso para operaciones largas",
+        "Implementar paz/core/events.py (EventBus)",
+        "Conectar EventBus para actualizar UI en cambios",
+        "Implementar paz/application/services/selection_service.py",
+        "Agregar picking en viewport (click para seleccionar)",
+        "Implementar multi-seleccion con Shift/Ctrl+click"
+      ],
+      "dependencies": ["F33"],
+      "output_files": [
+        "src/paz/presentation/__init__.py",
+        "src/paz/presentation/main_window.py",
+        "src/paz/presentation/panels/__init__.py",
+        "src/paz/presentation/panels/property_panel.py",
+        "src/paz/presentation/panels/model_tree.py",
+        "src/paz/presentation/dialogs/__init__.py",
+        "src/paz/presentation/dialogs/node_dialog.py",
+        "src/paz/presentation/dialogs/frame_dialog.py",
+        "src/paz/presentation/dialogs/material_dialog.py",
+        "src/paz/presentation/dialogs/section_dialog.py",
+        "src/paz/core/events.py",
+        "src/paz/application/services/selection_service.py",
+        "src/paz/presentation/viewport/picking.py"
+      ],
+      "acceptance_criteria": [
+        "MainWindow abre con viewport 3D funcional",
+        "Menu File: New, Open, Save, Save As, Recent, Exit",
+        "Menu Edit: Undo, Redo, Delete, Select All",
+        "Menu Model: Add Node, Add Frame, Materials, Sections",
+        "Menu Analysis: Run, View Results",
+        "Property panel muestra propiedades del elemento seleccionado",
+        "Model tree muestra estructura jerarquica",
+        "Click en viewport selecciona elemento",
+        "Shortcuts funcionan (Ctrl+S, Ctrl+Z, etc.)",
+        "Statusbar muestra: nodos, frames, estado guardado"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F-FINAL",
+      "name": "Integracion y Polish",
+      "description": "Integracion final, testing E2E y empaquetado",
+      "priority": "critical",
+      "category": "release",
+      "estimated_complexity": "high",
+      "steps": [
+        "Integrar todos los componentes en flujo completo",
+        "Crear test E2E: crear modelo simple, analizar, ver resultados",
+        "Crear test E2E: importar CSV, modificar, exportar DXF",
+        "Revisar y completar docstrings en funciones publicas",
+        "Configurar build con Nuitka",
+        "Crear script de empaquetado scripts/build.py",
+        "Generar ejecutable standalone .exe",
+        "Probar instalador en Windows 10 limpio",
+        "Verificar rendimiento: tiempo carga < 5s, UI < 100ms respuesta",
+        "Verificar memoria < 4GB con modelo 10,000 elementos",
+        "Corregir bugs encontrados en integracion",
+        "Crear README.md con instrucciones de uso"
+      ],
+      "dependencies": ["F-UI"],
+      "output_files": [
+        "scripts/build.py",
+        "scripts/package.py",
+        "tests/e2e/test_full_workflow.py",
+        "tests/e2e/test_import_export.py",
+        "README.md",
+        "dist/PAZ-Setup-1.0.0.exe"
+      ],
+      "acceptance_criteria": [
+        "Flujo completo funciona: crear proyecto -> modelar -> analizar -> ver resultados -> guardar",
+        "Import/Export CSV y DXF funciona sin errores",
+        "Ejecutable .exe inicia en Windows 10/11 sin dependencias",
+        "Tiempo de carga inicial < 5 segundos",
+        "Respuesta UI < 100ms en operaciones comunes",
+        "Memoria < 4GB con modelo 10,000 elementos",
+        "Tests E2E pasan al 100%",
+        "0 crashes en uso normal de 1 hora"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F35",
+      "name": "Sistema de Grillas",
+      "description": "Overlay de grillas parametricas con snapping y configuracion por eje",
+      "priority": "critical",
+      "category": "modeling",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Implementar paz/core/grid_config.py con spacing y modos de snapping",
+        "Agregar paz/presentation/viewport/grid_layer.py para renderizar lineas mayores y menores",
+        "Crear comandos y atajos para activar/desactivar grilla y ajustar el spacing",
+        "Persistir la configuracion de grilla en el archivo .paz",
+        "Sincronizar el snapping con las tolerancias de core/units",
+        "Agregar tests para grid y snapping en el viewport"
+      ],
+      "dependencies": ["F01", "F02"],
+      "output_files": [
+        "src/paz/core/grid_config.py",
+        "src/paz/presentation/viewport/grid_layer.py",
+        "src/paz/application/commands/grid_commands.py",
+        "tests/unit/presentation/test_grid_layer.py"
+      ],
+      "acceptance_criteria": [
+        "Grilla mayor y menor se muestra en el viewport y puede ocultarse",
+        "Configuraciones de spacing se guardan en el proyecto",
+        "El snapping al grid posiciona nodos y frames con tolerancias configurables"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F36",
+      "name": "Section Designer",
+      "description": "Editor para crear y ajustar secciones mixtas o no estandar y guardarlas en la libreria",
+      "priority": "critical",
+      "category": "modeling",
+      "estimated_complexity": "high",
+      "steps": [
+        "Implementar src/paz/presentation/dialogs/section_designer.py para ingresar geometria y materiales",
+        "Crear src/paz/domain/sections/designer.py que calcula E, G, Ixx/Iyy y rx/ry automaticamente",
+        "Agregar opciones para combinar materiales y capas en una seccion compuesta",
+        "Serializar las secciones personalizadas en el formato de sections_repository",
+        "Generar shape_data para renderizar la seccion en el viewport y en el builder"
+      ],
+      "dependencies": ["F08", "F09", "F12"],
+      "output_files": [
+        "src/paz/presentation/dialogs/section_designer.py",
+        "src/paz/domain/sections/designer.py",
+        "src/paz/domain/sections/section_factory.py",
+        "tests/unit/domain/test_section_designer.py"
+      ],
+      "acceptance_criteria": [
+        "Se pueden definir secciones con multiples capas y materiales y ver sus propiedades geometrico-mecanicas",
+        "Las secciones creadas generan shape_data para la vista 3D y se pueden asignar a frames",
+        "Las secciones custom se guardan en la libreria del proyecto y se exportan en JSON"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F37",
+      "name": "Conversor de Unidades",
+      "description": "Panel estilo Mathcad/SAP para convertir fuerzas y longitudes sin romper el flujo de analisis",
+      "priority": "high",
+      "category": "core",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Crear src/paz/core/unit_conversion_service.py con multiplicadores de unidades",
+        "Implementar src/paz/presentation/panels/unit_converter_panel.py",
+        "Integrar el panel con inputs de cargas y resultados para copiar conversiones",
+        "Sincronizar el panel con las preferencias de unidades del proyecto",
+        "Agregar tests unitarios e integracion para los principales pares de unidades"
+      ],
+      "dependencies": ["F31"],
+      "output_files": [
+        "src/paz/core/unit_conversion_service.py",
+        "src/paz/presentation/panels/unit_converter_panel.py",
+        "tests/unit/core/test_unit_conversion.py"
+      ],
+      "acceptance_criteria": [
+        "Se pueden convertir kN<->tonelada, kip<->kN y m<->ft desde un panel rapido",
+        "Los resultados se pueden copiar a las tablas de cargas o resultados",
+        "Las conversiones respetan las preferencias de unidades del proyecto"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F38",
+      "name": "Compatibilidad macOS",
+      "description": "Verificar empaquetado y dependencias para macOS sin perder funciones de analisis",
+      "priority": "high",
+      "category": "infrastructure",
+      "estimated_complexity": "medium",
+      "steps": [
+        "Crear scripts/mac_build.py para empaquetado con PyInstaller o Nuitka",
+        "Probar OpenSees y dependencias en macOS Intel y Apple Silicon",
+        "Documentar pasos de instalacion mac y validaciones de WebGL/Safari",
+        "Agregar pipeline CI/CD que genere build mac y ejecute pruebas basicas"
+      ],
+      "dependencies": ["F13", "F-UI"],
+      "output_files": [
+        "scripts/mac_build.py",
+        "docs/macos/README.md",
+        "tests/e2e/test_mac_workflow.py"
+      ],
+      "acceptance_criteria": [
+        "Existe build macOS que ejecuta crear proyecto -> modelar -> analizar -> resultados",
+        "OpenSees y Python 3.11/3.12 se instalan sin errores en mac",
+        "El documento de setup mac detalla requisitos y pasos de instalacion"
+      ],
+      "passes": false
+    }
+  ],
+  "summary": {
+    "total_features": 18,
+    "by_priority": {
+      "critical": 12,
+      "high": 4,
+      "medium": 1
+    },
+    "by_category": {
+      "infrastructure": 2,
+      "core": 2,
+      "modeling": 4,
+      "libraries": 3,
+      "analysis": 1,
+      "visualization": 3,
+      "io": 1,
+      "presentation": 1,
+      "release": 1
+    },
+    "estimated_total_files": 95,
+    "key_milestones": [
+      {"feature": "F02", "description": "Modelo estructural basico funcional"},
+      {"feature": "F13", "description": "Analisis estatico operativo"},
+      {"feature": "F19", "description": "Visualizacion de resultados completa"},
+      {"feature": "F-UI", "description": "Aplicacion usable con interfaz grafica"},
+      {"feature": "F-FINAL", "description": "MVP listo para distribucion"},
+      {"feature": "F35", "description": "Sistema de grillas y snapping operativo"},
+      {"feature": "F38", "description": "Build macOS y dependencias validadas"}
+    ]
+  },
+  "notas": {
+    "advertencias": [
+      "OpenSees/openseespy requiere Python 3.11/3.12; coordinar adaptadores para Kratos/RISA si se necesitan",
+      "Importador AutoCAD solo mapea lineas y depende de capas/materiales definidos",
+      "Perfiles AISC deben obtenerse de fuente oficial o generarse",
+      "Three.js requiere WebGL compatible para rendimiento optimo"
+    ],
+    "recomendaciones": [
+      "Implementar tests desde el inicio de cada feature",
+      "Hacer commits frecuentes con mensajes descriptivos",
+      "Revisar codigo con mypy antes de cada merge",
+      "Probar en Windows 10 y 11 y en macOS con OpenSees",
+      "Documentar el conversor de unidades y el flujo del importador AutoCAD"
+    ]
+  }
+}
