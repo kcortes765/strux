@@ -47,7 +47,7 @@
         "ruff check src/paz pasa",
         "pytest ejecuta (aunque no haya tests aun)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F31",
@@ -87,7 +87,7 @@
         "Formato .paz es JSON valido y legible",
         "Tests pasan al 100%"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F01",
@@ -131,7 +131,7 @@
         "Precision de coordenadas: 6 decimales",
         "Tests pasan al 100%"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F08",
@@ -171,7 +171,7 @@
         "Validacion rechaza valores invalidos",
         "Tests pasan al 100%"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F09",

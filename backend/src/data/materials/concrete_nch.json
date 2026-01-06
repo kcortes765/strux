@@ -1,0 +1,72 @@
+{
+  "description": "Chilean Standard (NCh) Concrete Materials",
+  "standard": "NCh",
+  "units": {
+    "E": "kPa",
+    "fc": "kPa",
+    "rho": "kg/m³"
+  },
+  "notes": "E calculated as 4700 * sqrt(fc in MPa) per NCh430",
+  "materials": [
+    {
+      "name": "H20",
+      "material_type": "concrete",
+      "standard": "NCh",
+      "description": "NCh H20 - Hormigon f'c = 20 MPa",
+      "E": 21019039,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 20000
+    },
+    {
+      "name": "H25",
+      "material_type": "concrete",
+      "standard": "NCh",
+      "description": "NCh H25 - Hormigon f'c = 25 MPa",
+      "E": 23500000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 25000
+    },
+    {
+      "name": "H30",
+      "material_type": "concrete",
+      "standard": "NCh",
+      "description": "NCh H30 - Hormigon f'c = 30 MPa",
+      "E": 25743000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 30000
+    },
+    {
+      "name": "H35",
+      "material_type": "concrete",
+      "standard": "NCh",
+      "description": "NCh H35 - Hormigon f'c = 35 MPa",
+      "E": 27806000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 35000
+    },
+    {
+      "name": "H40",
+      "material_type": "concrete",
+      "standard": "NCh",
+      "description": "NCh H40 - Hormigon f'c = 40 MPa",
+      "E": 29725000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 40000
+    },
+    {
+      "name": "H45",
+      "material_type": "concrete",
+      "standard": "NCh",
+      "description": "NCh H45 - Hormigon f'c = 45 MPa",
+      "E": 31529000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 45000
+    }
+  ]
+}

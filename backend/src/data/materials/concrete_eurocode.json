@@ -1,0 +1,82 @@
+{
+  "description": "Eurocode Concrete Materials (EN 1992-1-1)",
+  "standard": "Eurocode",
+  "units": {
+    "E": "kPa",
+    "fc": "kPa",
+    "rho": "kg/m³"
+  },
+  "notes": "E = 22000 * (fcm/10)^0.3 per EN 1992-1-1, fcm = fck + 8 MPa",
+  "materials": [
+    {
+      "name": "C20/25",
+      "material_type": "concrete",
+      "standard": "Eurocode",
+      "description": "Eurocode C20/25 - fck = 20 MPa, fcm = 28 MPa",
+      "E": 30000000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 20000
+    },
+    {
+      "name": "C25/30",
+      "material_type": "concrete",
+      "standard": "Eurocode",
+      "description": "Eurocode C25/30 - fck = 25 MPa, fcm = 33 MPa",
+      "E": 31000000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 25000
+    },
+    {
+      "name": "C30/37",
+      "material_type": "concrete",
+      "standard": "Eurocode",
+      "description": "Eurocode C30/37 - fck = 30 MPa, fcm = 38 MPa",
+      "E": 33000000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 30000
+    },
+    {
+      "name": "C35/45",
+      "material_type": "concrete",
+      "standard": "Eurocode",
+      "description": "Eurocode C35/45 - fck = 35 MPa, fcm = 43 MPa",
+      "E": 34000000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 35000
+    },
+    {
+      "name": "C40/50",
+      "material_type": "concrete",
+      "standard": "Eurocode",
+      "description": "Eurocode C40/50 - fck = 40 MPa, fcm = 48 MPa",
+      "E": 35000000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 40000
+    },
+    {
+      "name": "C45/55",
+      "material_type": "concrete",
+      "standard": "Eurocode",
+      "description": "Eurocode C45/55 - fck = 45 MPa, fcm = 53 MPa",
+      "E": 36000000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 45000
+    },
+    {
+      "name": "C50/60",
+      "material_type": "concrete",
+      "standard": "Eurocode",
+      "description": "Eurocode C50/60 - fck = 50 MPa, fcm = 58 MPa",
+      "E": 37000000,
+      "nu": 0.2,
+      "rho": 2400,
+      "fc": 50000
+    }
+  ]
+}

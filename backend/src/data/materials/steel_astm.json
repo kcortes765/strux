@@ -1,0 +1,111 @@
+{
+  "description": "ASTM Steel Materials",
+  "standard": "ASTM",
+  "units": {
+    "E": "kPa",
+    "fy": "kPa",
+    "fu": "kPa",
+    "rho": "kg/m³"
+  },
+  "materials": [
+    {
+      "name": "A36",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A36 - Carbon structural steel",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 250000,
+      "fu": 400000
+    },
+    {
+      "name": "A572-Gr50",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A572 Grade 50 - High-strength low-alloy steel",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 345000,
+      "fu": 450000
+    },
+    {
+      "name": "A572-Gr65",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A572 Grade 65 - High-strength low-alloy steel",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 450000,
+      "fu": 550000
+    },
+    {
+      "name": "A992",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A992 - Structural steel shapes (W sections)",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 345000,
+      "fu": 450000
+    },
+    {
+      "name": "A500-GrB",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A500 Grade B - Cold-formed HSS (round, square, rectangular)",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 315000,
+      "fu": 400000
+    },
+    {
+      "name": "A500-GrC",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A500 Grade C - Cold-formed HSS (higher strength)",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 345000,
+      "fu": 425000
+    },
+    {
+      "name": "A53-GrB",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A53 Grade B - Pipe steel",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 240000,
+      "fu": 415000
+    },
+    {
+      "name": "A325",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A325 - High-strength bolts",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 635000,
+      "fu": 830000
+    },
+    {
+      "name": "A490",
+      "material_type": "steel",
+      "standard": "ASTM",
+      "description": "ASTM A490 - High-strength bolts (higher grade)",
+      "E": 200000000,
+      "nu": 0.3,
+      "rho": 7850,
+      "fy": 895000,
+      "fu": 1035000
+    }
+  ]
+}
