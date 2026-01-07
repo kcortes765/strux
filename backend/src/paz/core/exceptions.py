@@ -144,6 +144,13 @@ class SectionError(PazError):
         super().__init__(message, details)
 
 
+class SectionNotFoundError(SectionError):
+    """Raised when a section cannot be found."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Section not found: {name}", section_id=name)
+
+
 class UnitConversionError(PazError):
     """Raised when unit conversion fails."""
 
